@@ -92,7 +92,7 @@ cd Brain_Tumor_Detector
 pip install -r requirements.txt
 
 # Launch the main notebook
-jupyter notebook notebooks/brain_tumor_detection-final.ipynb
+jupyter notebook notebooks/brain_tumor_detection_final.ipynb
 
 ```
 

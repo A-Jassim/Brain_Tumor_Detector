@@ -8,7 +8,7 @@ import sys
 
 def load_and_preprocess(img_path: str, img_size: tuple):
     img = image.load_img(img_path, target_size=img_size)
-    arr = image.img_to_array(img) / 255.0
+    arr = image.img_to_array(img)
     return np.expand_dims(arr, axis=0)
 
 def select_file():
@@ -37,7 +37,7 @@ def main(args):
 if __name__ == '__main__':
     p = argparse.ArgumentParser()
     p.add_argument('--model_path', type=str, default='models/best_model.keras')
-    p.add_argument('--img_path',   type=str, help='Chemin vers une image (sinon interface graphique)')
+    p.add_argument('--img_path',   type=str,)
     p.add_argument('--img_size',   nargs=2, type=int, default=[128,128])
     args = p.parse_args()
     main(args)

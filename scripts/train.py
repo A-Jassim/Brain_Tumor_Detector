@@ -78,10 +78,9 @@ def main(args):
 if __name__ == '__main__':
     import argparse
     p = argparse.ArgumentParser()
-    p.add_argument('--raw_dir',        type=str, default='raw_data')
+    p.add_argument('--raw_dir',        type=str, default='data_set')
     p.add_argument('--processed_dir',  type=str, default='data_set')
-    p.add_argument('--categories',     nargs='+', required=True,
-                   help='ex: yes no')
+    p.add_argument('--categories',     nargs='+',default= ['yes', 'no'])
     p.add_argument('--img_size',       nargs=2, type=int, default=[128,128])
     p.add_argument('--batch_size',     type=int, default=16)
     p.add_argument('--epochs',         type=int, default=20)

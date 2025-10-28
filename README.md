@@ -91,8 +91,11 @@ cd Brain_Tumor_Detector
 # Install dependencies
 pip install -r requirements.txt
 
-# Launch the main notebook
-jupyter notebook notebooks/brain_tumor_detection_final.ipynb
+# train the model
+python -m scripts.train
+
+# Prediction from an image
+python -m scripts.predict
 
 ```
 

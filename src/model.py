@@ -4,15 +4,15 @@ from tensorflow.keras import layers, regularizers
 from keras.callbacks import EarlyStopping
 from sklearn.utils import class_weight
 
-def build_model(input_shape=(128,128,3),
-                dropout_rate=0.6,
-                l2_rate=1e-4):
+def build_model(input_shape=(224,224,3),
+                dropout_rate=0.5,
+                l2_rate=1e-5):
     """Build CNN model with MobileNetV2."""
     # Data augmentation
     # Random transformations to make model more robust
     data_aug = tf.keras.Sequential([
         layers.RandomFlip('horizontal_and_vertical'),
-        layers.RandomRotation(0.05),
+        layers.RandomRotation(0.1),
         layers.RandomZoom(0.1),
         layers.RandomTranslation(0.1, 0.1),
         layers.RandomContrast(0.1),
@@ -25,23 +25,24 @@ def build_model(input_shape=(128,128,3),
     )
     # Freeze base layers
     # We keep the pre-trained weights and only train our custom layers
-    base_model.trainable = False
-
+    base_model.trainable = True
+    for layer in base_model.layers[:-20]:
+        layer.trainable = False
+        
     # Build model
     model = tf.keras.Sequential([
         data_aug,                                      # Augmentation
         layers.Rescaling(1./255),                      # Normalize to [0, 1]
         base_model,                                    # Feature extractor
         layers.GlobalAveragePooling2D(),               # Pool features
-        layers.Dense(64, activation='relu',            # Hidden layer
-                     kernel_regularizer=regularizers.l2(l2_rate)),
+        layers.Dense(64, activation='relu', kernel_regularizer=regularizers.l2(l2_rate)),  # Dense layer with L2 regularization
         layers.Dropout(dropout_rate),                  # Prevent overfitting
         layers.Dense(1, activation='sigmoid')          # Binary output (0 or 1)
     ])
 
     # Compile model
     model.compile(
-        optimizer='adam',
+        optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
         loss='binary_crossentropy',
         metrics=['accuracy']
     )

@@ -7,7 +7,7 @@ def plot_metrics(history):
     # Plot accuracy
     plt.figure()
     plt.plot(history.history['accuracy'], label='Train')
-    plt.plot(history.history['val_accuracy'], label='Val')
+    plt.plot(history.history['val_accuracy'], label='Validation')  
     plt.title('Accuracy')
     plt.legend()
     plt.show()
@@ -34,10 +34,10 @@ def evaluate_model(model, dataset, class_names, title='Test'):
 
     # Print report
     # Shows precision, recall, F1-score for each class
-    print(f"--- {title} Set Report ---")
+    print(f"{title} Set Report")
     print(classification_report(y_true, y_pred, target_names=class_names))
     acc = accuracy_score(y_true, y_pred)
-    print(f"{title} accuracy: {acc:.2f}")
+    print(f"{title} accuracy: {acc:.4f}")
 
     # Show confusion matrix
     # Rows = true labels, Columns = predicted labels

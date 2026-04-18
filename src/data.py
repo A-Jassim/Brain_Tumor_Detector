@@ -7,15 +7,15 @@ def split_data(source_dir: str,
                dest_dir: str,
                categories: list,
                train_pct: float = 0.8,
-               val_pct: float = 0.15,
+               test_pct: float = 0.2,
                seed: int = 42):
-    """Split images into train/validation/test (80/15/5)."""
+    """Split images into train/test (80/20)."""
     # Set random seed
     random.seed(seed)
 
     # Create directories
     # We need train, validation, and test folders for each category
-    for split in ['train', 'validation', 'test']:
+    for split in ['train','test']:
         for cat in categories:
             os.makedirs(os.path.join(dest_dir, split, cat), exist_ok=True)
 
@@ -28,15 +28,13 @@ def split_data(source_dir: str,
         # Calculate split sizes
         total = len(imgs)
         n_train = int(train_pct * total)  # Example: 80% for training
-        n_val   = int(val_pct   * total)  # Example: 15% for validation
-        n_test  = total - n_train - n_val # Remaining for test (5%)
+        n_test   = int(test_pct   * total)  # Example: 20% for validation
 
         # Divide into splits
         # Use list slicing to separate images
         splits = {
-            'train':      imgs[:n_train],
-            'validation': imgs[n_train:n_train + n_val],
-            'test':       imgs[n_train + n_val:]
+            'train': imgs[:n_train],
+            'test': imgs[n_train:n_train+n_test]
         }
 
         # Copy files to folders
@@ -47,26 +45,19 @@ def split_data(source_dir: str,
                 shutil.copy(src, dst)
 
     # Print counts
-    for split in ['train', 'validation', 'test']:
+    for split in ['train', 'test']:
         for cat in categories:
             cnt = len(os.listdir(os.path.join(dest_dir, split, cat)))
             print(f"{split.capitalize()} — {cat}: {cnt} images")
 
 def load_datasets(data_dir: str,
-                  image_size: tuple = (128, 128),
-                  batch_size: int = 16,
+                  image_size: tuple = (224, 224),
+                  batch_size: int = 32,
                   seed: int = 42):
     """Load TensorFlow datasets."""
     # Load training data
     train_ds = tf.keras.preprocessing.image_dataset_from_directory(
         os.path.join(data_dir, 'train'),
-        image_size=image_size,
-        batch_size=batch_size,
-        shuffle=True, seed=seed
-    )
-    # Load validation data
-    val_ds = tf.keras.preprocessing.image_dataset_from_directory(
-        os.path.join(data_dir, 'validation'),
         image_size=image_size,
         batch_size=batch_size,
         shuffle=True, seed=seed
@@ -79,5 +70,5 @@ def load_datasets(data_dir: str,
         shuffle=False
     )
     # Return all datasets plus class names (e.g., ['yes', 'no'])
-    return train_ds, val_ds, test_ds, train_ds.class_names
+    return train_ds, test_ds, train_ds.class_names
 

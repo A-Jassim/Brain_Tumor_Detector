@@ -47,7 +47,7 @@ def main(args):
             categories=args.categories
         )
     # Load all datasets
-    train_ds, val_ds, test_ds, class_names = load_datasets(
+    train_ds, test_ds, class_names = load_datasets(
         args.processed_dir,
         image_size=tuple(args.img_size),
         batch_size=args.batch_size
@@ -67,7 +67,7 @@ def main(args):
     # Train the model
     history = model.fit(
         train_ds,
-        validation_data=val_ds,
+        validation_data=test_ds,
         epochs=args.epochs,
         callbacks=callbacks,
         class_weight=cw  # Apply weights to handle imbalance
@@ -77,7 +77,6 @@ def main(args):
     # Display training curves and evaluation metrics
     plot_metrics(history)
     evaluate_model(model, train_ds, class_names, title='Train')
-    evaluate_model(model, val_ds, class_names, title='Validation')
     evaluate_model(model, test_ds, class_names, title='Test')
 
     # Save model
@@ -92,11 +91,11 @@ if __name__ == '__main__':
     p.add_argument('--raw_dir',        type=str, default='data_set')
     p.add_argument('--processed_dir',  type=str, default='data_set')
     p.add_argument('--categories',     nargs='+',default= ['yes', 'no'])
-    p.add_argument('--img_size',       nargs=2, type=int, default=[128,128])
-    p.add_argument('--batch_size',     type=int, default=16)
-    p.add_argument('--epochs',         type=int, default=20)
-    p.add_argument('--dropout',        type=float, default=0.6)
-    p.add_argument('--l2',             type=float, default=1e-4)
+    p.add_argument('--img_size',       nargs=2, type=int, default=[224,224])
+    p.add_argument('--batch_size',     type=int, default=32)
+    p.add_argument('--epochs',         type=int, default=100)
+    p.add_argument('--dropout',        type=float, default=0.5)
+    p.add_argument('--l2',             type=float, default=1e-5)
     p.add_argument('--patience',       type=int, default=12)
     p.add_argument('--output_model',   type=str, default='models/best_model.keras')
     args = p.parse_args()
